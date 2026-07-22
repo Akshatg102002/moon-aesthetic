@@ -7,6 +7,9 @@ import {
   GraduationCap, MessageCircle, Calendar, ArrowRight
 } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
+import SEO from '../components/SEO';
+import { pages, SITE_URL } from '../config/seo';
+import { breadcrumbSchema } from '../config/schema';
 
 const whyChoose = [
   { icon: ClipboardCheck, title: 'Personalized Treatment Plans', desc: 'Every treatment plan is tailored to your unique skin, hair, and aesthetic concerns.' },
@@ -60,7 +63,11 @@ export default function AboutPage() {
   const navigate = useNavigate();
   const { openModal } = useBookNow();
 
+  const page = pages.find((p) => p.slug === 'about')!;
+
   return (
+    <>
+      <SEO title={page.title} description={page.description} path={page.path} keywords={page.keywords} image={page.image} breadcrumbs={[{ name: 'Home', url: SITE_URL }, { name: page.slug === 'treatments' ? 'Treatments' : page.slug === 'about' ? 'About' : 'Contact', url: `${SITE_URL}${page.path}` }]} schema={breadcrumbSchema([{ name: 'Home', url: SITE_URL }, { name: page.slug === 'treatments' ? 'Treatments' : page.slug === 'about' ? 'About' : 'Contact', url: `${SITE_URL}${page.path}` }])} />
     <div className="min-h-screen bg-white font-['Poppins'] text-[#333]">
 
       {/* ===== HERO ===== */}
@@ -434,5 +441,6 @@ export default function AboutPage() {
         <MessageCircle size={26} className="text-white" />
       </a>
     </div>
+    </>
   );
 }

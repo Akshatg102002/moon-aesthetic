@@ -7,6 +7,9 @@ import {
   Calendar, MessageCircle
 } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
+import SEO from '../components/SEO';
+import { pages, SITE_URL } from '../config/seo';
+import { breadcrumbSchema } from '../config/schema';
 
 const serviceOptions = [
   'Skin Consultation',
@@ -137,7 +140,11 @@ export default function ContactPage() {
     }
   };
 
+  const page = pages.find((p) => p.slug === 'contact')!;
+
   return (
+    <>
+      <SEO title={page.title} description={page.description} path={page.path} keywords={page.keywords} image={page.image} breadcrumbs={[{ name: 'Home', url: SITE_URL }, { name: page.slug === 'treatments' ? 'Treatments' : page.slug === 'about' ? 'About' : 'Contact', url: `${SITE_URL}${page.path}` }]} schema={breadcrumbSchema([{ name: 'Home', url: SITE_URL }, { name: page.slug === 'treatments' ? 'Treatments' : page.slug === 'about' ? 'About' : 'Contact', url: `${SITE_URL}${page.path}` }])} />
     <div className="min-h-screen bg-white font-['Poppins'] text-[#333]">
 
       {/* ===== HERO ===== */}
@@ -499,5 +506,6 @@ export default function ContactPage() {
         <MessageCircle size={26} className="text-white" />
       </a>
     </div>
+    </>
   );
 }

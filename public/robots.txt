@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /api/private
+Disallow: /api/admin
+
+Sitemap: https://moonaesthetic.in/sitemap.xml
