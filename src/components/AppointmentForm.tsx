@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle, Loader2, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { sendFormSubmission } from '../lib/formSubmit';
 
 const serviceOptions = [
   'Skin Consultation',
@@ -58,19 +59,15 @@ export default function AppointmentForm() {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      await sendFormSubmission({
+        ...form,
+        formType: 'Homepage Appointment Form',
+        _subject: `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`,
       });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Something went wrong');
-      }
       setSuccess(true);
       setForm({ name: '', phone: '', email: '', service: '', date: '', time: '', message: '' });
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit appointment. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit appointment. Please try again.');
     } finally {
       setLoading(false);
     }
