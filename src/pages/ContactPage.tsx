@@ -218,7 +218,7 @@ export default function ContactPage() {
                     className="inline-flex items-center gap-1.5 text-[#C89B3C] text-xs font-semibold tracking-wider uppercase hover:gap-2.5 transition-all"
                   >
                     {card.cta}
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
                   </a>
                 )}
               </motion.div>
@@ -387,14 +387,14 @@ export default function ContactPage() {
             >
               <div className="rounded-3xl overflow-hidden shadow-sm border border-gray-100 h-full min-h-[400px]">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.0167!2d77.6352!3d13.0118!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae16b6e9e7e7e7%3A0x1234567890abcdef!2sHRBR%20Layout%201st%20Block%2C%20Kalyan%20Nagar%2C%20Bengaluru%2C%20Karnataka%20560043!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.2829511311184!2d77.64339869999999!3d13.017644899999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae175f7e400f61%3A0x7089fd4c7fe94d4d!2sMoon%20Aesthetic%20-%20Skin%20and%20Hair%20Clinic!5e0!3m2!1sen!2sin!4v1784712618089!5m2!1sen!2sin"
                   width="100%"
                   height="100%"
-                  style={{ border: 0, minHeight: '400px' }}
+                  style={{ border: 0, minHeight: "400px" }}
                   allowFullScreen
                   loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Moon Aesthetic Location"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  title="Moon Aesthetic - Skin and Hair Clinic"
                   className="w-full h-full"
                 />
               </div>
