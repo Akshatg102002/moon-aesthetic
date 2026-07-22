@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Sparkles, Droplets, Zap, Clock, Scissors, Eye, Sun, Flame, HeartPulse, Syringe, Wind, Crosshair, ArrowRight } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
 
@@ -62,7 +63,7 @@ export default function Services() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          setServices(data.map((s: any) => ({ ...s, category: s.category || s.features || 'Skin' })));
+          setServices(data.map((s: Service) => ({ ...s, category: s.category || s.features || 'Skin' })));
         } else {
           setServices(defaultServices);
         }
@@ -147,7 +148,11 @@ export default function Services() {
                   <div className="relative h-40 overflow-hidden">
                     <img
                       src={service.image_url}
-                      alt={service.title}
+                      alt={`${service.title} treatment at Moon Aesthetic`}
+                        title={service.title}
+                        width="640"
+                        height="426"
+                        loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
@@ -156,9 +161,7 @@ export default function Services() {
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-['Playfair_Display'] text-base font-bold text-[#1a1a1a] mb-2 group-hover:text-[#C89B3C] transition-colors">
-                      {service.title}
-                    </h3>
+                    <h3 className="font-['Playfair_Display'] text-base font-bold text-[#1a1a1a] mb-2 group-hover:text-[#C89B3C] transition-colors"><Link to={`/treatments/${service.slug}`}>{service.title}</Link></h3>
                     <p className="text-[#888] text-xs leading-relaxed mb-3 font-['Poppins'] line-clamp-2">
                       {service.description}
                     </p>

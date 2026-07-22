@@ -16,10 +16,17 @@ import StickyButtons from './components/StickyButtons';
 import ContactPage from './pages/ContactPage';
 import AboutPage from './pages/AboutPage';
 import TreatmentsPage from './pages/TreatmentsPage';
+import TreatmentDetailPage from './pages/TreatmentDetailPage';
+import SEO from './components/SEO';
+import JsonLd from './components/JsonLd';
+import { pages } from './config/seo';
+import { medicalClinicSchema, organizationSchema, websiteSchema } from './config/schema';
 
 function HomePage() {
+  const page = pages[0];
   return (
     <>
+      <SEO title={page.title} description={page.description} path={page.path} keywords={page.keywords} image={page.image} />
       <Hero />
       <About />
       <Services />
@@ -38,11 +45,13 @@ function App() {
     <BrowserRouter>
       <BookNowProvider>
         <div className="min-h-screen bg-white font-['Poppins'] text-[#333]">
+          <JsonLd data={[organizationSchema, websiteSchema, medicalClinicSchema]} />
           <Navbar />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/treatments" element={<TreatmentsPage />} />
+            <Route path="/treatments/:slug" element={<TreatmentDetailPage />} />
             <Route path="/contact" element={<ContactPage />} />
           </Routes>
           <Footer />

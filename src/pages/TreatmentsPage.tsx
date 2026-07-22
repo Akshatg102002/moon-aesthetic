@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   Sparkles, Droplets, Zap, Clock, Scissors, Eye, Sun, Flame,
   HeartPulse, Syringe, Wind, ArrowRight, Calendar, MessageCircle,
   CheckCircle, Shield
 } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
+import SEO from '../components/SEO';
+import { pages, SITE_URL } from '../config/seo';
+import { breadcrumbSchema } from '../config/schema';
 
 interface Service {
   id: number;
@@ -80,7 +84,7 @@ export default function TreatmentsPage() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          setServices(data.map((s: any) => ({ ...s, category: s.category || s.features || 'Skin' })));
+          setServices(data.map((s: Service) => ({ ...s, category: s.category || s.features || 'Skin' })));
         } else {
           setServices(defaultServices);
         }
@@ -98,7 +102,11 @@ export default function TreatmentsPage() {
     ? displayServices
     : displayServices.filter((s) => s.category === activeCategory);
 
+  const page = pages.find((p) => p.slug === 'treatments')!;
+
   return (
+    <>
+      <SEO title={page.title} description={page.description} path={page.path} keywords={page.keywords} image={page.image} breadcrumbs={[{ name: 'Home', url: SITE_URL }, { name: page.slug === 'treatments' ? 'Treatments' : page.slug === 'about' ? 'About' : 'Contact', url: `${SITE_URL}${page.path}` }]} schema={breadcrumbSchema([{ name: 'Home', url: SITE_URL }, { name: page.slug === 'treatments' ? 'Treatments' : page.slug === 'about' ? 'About' : 'Contact', url: `${SITE_URL}${page.path}` }])} />
     <div className="min-h-screen bg-white font-['Poppins'] text-[#333]">
 
       {/* ===== HERO ===== */}
@@ -224,7 +232,11 @@ export default function TreatmentsPage() {
                     <div className="relative h-52 overflow-hidden">
                       <img
                         src={service.image_url}
-                        alt={service.title}
+                        alt={`${service.title} treatment at Moon Aesthetic`}
+                        title={service.title}
+                        width="640"
+                        height="426"
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
@@ -238,9 +250,7 @@ export default function TreatmentsPage() {
                       </div>
                     </div>
                     <div className="p-6">
-                      <h3 className="font-['Playfair_Display'] text-xl font-bold text-[#1a1a1a] mb-3 group-hover:text-[#C89B3C] transition-colors">
-                        {service.title}
-                      </h3>
+                      <h3 className="font-['Playfair_Display'] text-xl font-bold text-[#1a1a1a] mb-3 group-hover:text-[#C89B3C] transition-colors"><Link to={`/treatments/${service.slug}`}>{service.title}</Link></h3>
                       <p className="text-[#888] text-sm leading-relaxed mb-5 font-['Poppins']">
                         {service.description}
                       </p>
@@ -365,5 +375,6 @@ export default function TreatmentsPage() {
         <MessageCircle size={26} className="text-white" />
       </a>
     </div>
+    </>
   );
 }
