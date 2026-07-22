@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, CheckCircle, Loader2, Calendar, Phone, User } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
+import { sendFormSubmission } from '../lib/formSubmit';
 
 const serviceOptions = [
   'Skin Consultation',
@@ -32,6 +33,7 @@ export default function BookNowModal() {
 
   useEffect(() => {
     if (prefillService) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- keep modal service prefill in sync with context when opened from treatment CTAs.
       setForm(prev => ({ ...prev, service: prefillService }));
     }
   }, [prefillService]);
@@ -57,18 +59,14 @@ export default function BookNowModal() {
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      await sendFormSubmission({
+        ...form,
+        formType: 'Book Now Modal Appointment Form',
+        _subject: `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`,
       });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Something went wrong');
-      }
       setSuccess(true);
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit. Please try again.');
     } finally {
       setLoading(false);
     }

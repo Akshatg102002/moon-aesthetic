@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import {
   Phone, Mail, MapPin, Clock, Send, CheckCircle, Loader2,
   UserPlus, Sparkles, Stethoscope, ShieldCheck, Cpu,
   Calendar, MessageCircle
 } from 'lucide-react';
-import { useBookNow } from '../contexts/BookNowContext';
 import SEO from '../components/SEO';
 import { pages, SITE_URL } from '../config/seo';
 import { breadcrumbSchema } from '../config/schema';
+import { sendFormSubmission } from '../lib/formSubmit';
 
 const serviceOptions = [
   'Skin Consultation',
@@ -96,7 +95,6 @@ const whyVisit = [
 ];
 
 export default function ContactPage() {
-  const { openModal } = useBookNow();
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -122,19 +120,15 @@ export default function ContactPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+      await sendFormSubmission({
+        ...form,
+        formType: 'Contact Page Appointment Form',
+        _subject: `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`,
       });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Something went wrong');
-      }
       setSuccess(true);
       setForm({ name: '', phone: '', email: '', service: '', date: '', message: '' });
-    } catch (err: any) {
-      setError(err.message || 'Failed to submit appointment. Please try again.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit appointment. Please try again.');
     } finally {
       setLoading(false);
     }
