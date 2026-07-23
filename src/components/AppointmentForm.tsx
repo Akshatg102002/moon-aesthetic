@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, CheckCircle, Loader2, MapPin, Phone, Mail, Clock } from 'lucide-react';
-import { sendFormSubmission } from '../lib/formSubmit';
+import {
+  appendFormSubmitFields,
+  FORMSUBMIT_AUTORESPONSE,
+  FORMSUBMIT_CC,
+  FORMSUBMIT_FALLBACK_ENDPOINT,
+  FORMSUBMIT_NEXT_URL,
+  sendFormSubmission,
+} from '../lib/formSubmit';
 
 const serviceOptions = [
   'Skin Consultation',
@@ -48,8 +55,11 @@ export default function AppointmentForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (loading) return;
+
     setError('');
 
     if (!form.name || !form.phone || !form.service || !form.date) {
@@ -57,13 +67,16 @@ export default function AppointmentForm() {
       return;
     }
 
+    const formData = new FormData(e.currentTarget);
+    formData.set('formType', 'Homepage Appointment Form');
+    appendFormSubmitFields(
+      formData,
+      `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`
+    );
+
     setLoading(true);
     try {
-      await sendFormSubmission({
-        ...form,
-        formType: 'Homepage Appointment Form',
-        _subject: `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`,
-      });
+      await sendFormSubmission(formData);
       setSuccess(true);
       setForm({ name: '', phone: '', email: '', service: '', date: '', time: '', message: '' });
     } catch (err) {
@@ -120,13 +133,20 @@ export default function AppointmentForm() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form action={FORMSUBMIT_FALLBACK_ENDPOINT} method="POST" onSubmit={handleSubmit} className="space-y-5">
+                  <input type="hidden" name="_cc" value={FORMSUBMIT_CC} />
+                  <input type="hidden" name="_captcha" value="false" />
+                  <input type="hidden" name="_next" value={FORMSUBMIT_NEXT_URL} />
+                  <input type="hidden" name="_subject" value="New Moon Aesthetic Appointment Request" />
+                  <input type="hidden" name="_template" value="table" />
+                  <input type="hidden" name="_autoresponse" value={FORMSUBMIT_AUTORESPONSE} />
                 <div className="grid sm:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-medium text-[#333] mb-1.5">Full Name *</label>
                     <input
                       type="text"
                       name="name"
+                      required
                       value={form.name}
                       onChange={handleChange}
                       placeholder="Your full name"
@@ -138,6 +158,7 @@ export default function AppointmentForm() {
                     <input
                       type="tel"
                       name="phone"
+                      required
                       value={form.phone}
                       onChange={handleChange}
                       placeholder="+91 9113869966"
@@ -162,6 +183,7 @@ export default function AppointmentForm() {
                     <label className="block text-sm font-medium text-[#333] mb-1.5">Service *</label>
                     <select
                       name="service"
+                      required
                       value={form.service}
                       onChange={handleChange}
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#C89B3C] focus:ring-2 focus:ring-[#C89B3C]/20 outline-none transition-all text-sm font-['Poppins'] bg-[#faf9f7] appearance-none"
@@ -180,6 +202,7 @@ export default function AppointmentForm() {
                     <input
                       type="date"
                       name="date"
+                      required
                       value={form.date}
                       onChange={handleChange}
                       min={new Date().toISOString().split('T')[0]}

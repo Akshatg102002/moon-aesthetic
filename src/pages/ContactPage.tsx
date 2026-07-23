@@ -8,7 +8,14 @@ import {
 import SEO from '../components/SEO';
 import { pages, SITE_URL } from '../config/seo';
 import { breadcrumbSchema } from '../config/schema';
-import { sendFormSubmission } from '../lib/formSubmit';
+import {
+  appendFormSubmitFields,
+  FORMSUBMIT_AUTORESPONSE,
+  FORMSUBMIT_CC,
+  FORMSUBMIT_FALLBACK_ENDPOINT,
+  FORMSUBMIT_NEXT_URL,
+  sendFormSubmission,
+} from '../lib/formSubmit';
 
 const serviceOptions = [
   'Skin Consultation',
@@ -111,20 +118,27 @@ export default function ContactPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (loading) return;
+
     setError('');
     if (!form.name || !form.phone || !form.service || !form.date) {
       setError('Please fill in all required fields.');
       return;
     }
+
+    const formData = new FormData(e.currentTarget);
+    formData.set('formType', 'Contact Page Appointment Form');
+    appendFormSubmitFields(
+      formData,
+      `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`
+    );
+
     setLoading(true);
     try {
-      await sendFormSubmission({
-        ...form,
-        formType: 'Contact Page Appointment Form',
-        _subject: `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`,
-      });
+      await sendFormSubmission(formData);
       setSuccess(true);
       setForm({ name: '', phone: '', email: '', service: '', date: '', message: '' });
     } catch (err) {
@@ -275,13 +289,20 @@ export default function ContactPage() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
+                <form action={FORMSUBMIT_FALLBACK_ENDPOINT} method="POST" onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-100">
+                  <input type="hidden" name="_cc" value={FORMSUBMIT_CC} />
+                  <input type="hidden" name="_captcha" value="false" />
+                  <input type="hidden" name="_next" value={FORMSUBMIT_NEXT_URL} />
+                  <input type="hidden" name="_subject" value="New Moon Aesthetic Appointment Request" />
+                  <input type="hidden" name="_template" value="table" />
+                  <input type="hidden" name="_autoresponse" value={FORMSUBMIT_AUTORESPONSE} />
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-medium text-[#333] mb-1.5">Full Name *</label>
                       <input
                         type="text"
                         name="name"
+                        required
                         value={form.name}
                         onChange={handleChange}
                         placeholder="Your full name"
@@ -293,6 +314,7 @@ export default function ContactPage() {
                       <input
                         type="tel"
                         name="phone"
+                        required
                         value={form.phone}
                         onChange={handleChange}
                         placeholder="+91 9113869966"
@@ -317,6 +339,7 @@ export default function ContactPage() {
                       <label className="block text-sm font-medium text-[#333] mb-1.5">Treatment Interested In *</label>
                       <select
                         name="service"
+                        required
                         value={form.service}
                         onChange={handleChange}
                         className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#C89B3C] focus:ring-2 focus:ring-[#C89B3C]/20 outline-none transition-all text-sm font-['Poppins'] bg-[#faf9f7] appearance-none"
@@ -334,6 +357,7 @@ export default function ContactPage() {
                     <input
                       type="date"
                       name="date"
+                      required
                       value={form.date}
                       onChange={handleChange}
                       min={new Date().toISOString().split('T')[0]}
