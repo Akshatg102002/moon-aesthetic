@@ -2,7 +2,14 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, CheckCircle, Loader2, Calendar, Phone, User } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
-import { sendFormSubmission } from '../lib/formSubmit';
+import {
+  appendFormSubmitFields,
+  FORMSUBMIT_AUTORESPONSE,
+  FORMSUBMIT_CC,
+  FORMSUBMIT_FALLBACK_ENDPOINT,
+  FORMSUBMIT_NEXT_URL,
+  sendFormSubmission,
+} from '../lib/formSubmit';
 
 const serviceOptions = [
   'Skin Consultation',
@@ -50,20 +57,27 @@ export default function BookNowModal() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (loading) return;
+
     setError('');
     if (!form.name || !form.phone || !form.date) {
       setError('Please fill in all required fields.');
       return;
     }
+
+    const formData = new FormData(e.currentTarget);
+    formData.set('formType', 'Book Now Modal Appointment Form');
+    appendFormSubmitFields(
+      formData,
+      `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`
+    );
+
     setLoading(true);
     try {
-      await sendFormSubmission({
-        ...form,
-        formType: 'Book Now Modal Appointment Form',
-        _subject: `New Moon Aesthetic Appointment Request - ${form.service || 'General Enquiry'}`,
-      });
+      await sendFormSubmission(formData);
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to submit. Please try again.');
@@ -143,7 +157,13 @@ export default function BookNowModal() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form action={FORMSUBMIT_FALLBACK_ENDPOINT} method="POST" onSubmit={handleSubmit} className="space-y-4">
+                  <input type="hidden" name="_cc" value={FORMSUBMIT_CC} />
+                  <input type="hidden" name="_captcha" value="false" />
+                  <input type="hidden" name="_next" value={FORMSUBMIT_NEXT_URL} />
+                  <input type="hidden" name="_subject" value="New Moon Aesthetic Appointment Request" />
+                  <input type="hidden" name="_template" value="table" />
+                  <input type="hidden" name="_autoresponse" value={FORMSUBMIT_AUTORESPONSE} />
                   {/* Name */}
                   <div>
                     <label className="block text-sm font-medium text-[#333] mb-1.5">
@@ -153,6 +173,7 @@ export default function BookNowModal() {
                     <input
                       type="text"
                       name="name"
+                      required
                       value={form.name}
                       onChange={handleChange}
                       placeholder="Your full name"
@@ -169,6 +190,7 @@ export default function BookNowModal() {
                     <input
                       type="tel"
                       name="phone"
+                      required
                       value={form.phone}
                       onChange={handleChange}
                       placeholder="+91 9113869966"
@@ -203,6 +225,7 @@ export default function BookNowModal() {
                     <input
                       type="date"
                       name="date"
+                      required
                       value={form.date}
                       onChange={handleChange}
                       min={new Date().toISOString().split('T')[0]}
