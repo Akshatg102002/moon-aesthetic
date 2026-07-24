@@ -1,21 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, ChevronDown } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
+import { treatments } from '../config/seo';
 
 const sectionLinks = [
   { label: 'Home', href: '#home' },
 ];
 
-const pageLinks = [
-  { label: 'About', to: '/about' },
-  { label: 'Treatments', to: '/treatments' },
-  { label: 'Contact', to: '/contact' },
-];
-
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [treatmentsOpen, setTreatmentsOpen] = useState(false);
+  const [mobileTreatmentsOpen, setMobileTreatmentsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const isHome = location.pathname === '/';
@@ -80,17 +77,54 @@ export default function Navbar() {
                 {link.label}
               </button>
             ))}
-            {pageLinks.map((link) => (
+            <Link
+              to="/about"
+              onClick={() => setIsOpen(false)}
+              className={`text-[11px] tracking-[0.15em] uppercase font-medium transition-all hover:text-[#C89B3C] ${location.pathname === '/about' ? 'text-[#C89B3C]' : textDark ? 'text-[#333]' : 'text-white/90'
+                }`}
+            >
+              About
+            </Link>
+            <div
+              className="relative"
+              onMouseEnter={() => setTreatmentsOpen(true)}
+              onMouseLeave={() => setTreatmentsOpen(false)}
+            >
               <Link
-                key={link.to}
-                to={link.to}
+                to="/treatments"
                 onClick={() => setIsOpen(false)}
-                className={`text-[11px] tracking-[0.15em] uppercase font-medium transition-all hover:text-[#C89B3C] ${location.pathname === link.to ? 'text-[#C89B3C]' : textDark ? 'text-[#333]' : 'text-white/90'
+                className={`flex items-center gap-1 text-[11px] tracking-[0.15em] uppercase font-medium transition-all hover:text-[#C89B3C] ${location.pathname.startsWith('/treatments') ? 'text-[#C89B3C]' : textDark ? 'text-[#333]' : 'text-white/90'
                   }`}
               >
-                {link.label}
+                Treatments
+                <ChevronDown size={12} className={`transition-transform duration-300 ${treatmentsOpen ? 'rotate-180' : ''}`} />
               </Link>
-            ))}
+              <div
+                className={`absolute top-full left-1/2 -translate-x-1/2 pt-3 transition-all duration-200 ${treatmentsOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+                  }`}
+              >
+                <div className="bg-white rounded-xl shadow-xl border border-gray-100 py-2 min-w-[240px] max-h-[70vh] overflow-y-auto">
+                  {treatments.map((t) => (
+                    <Link
+                      key={t.slug}
+                      to={`/treatments/${t.slug}`}
+                      onClick={() => { setIsOpen(false); setTreatmentsOpen(false); }}
+                      className="block px-4 py-2 text-[11px] tracking-wide uppercase font-medium text-[#333] hover:bg-[#C89B3C]/10 hover:text-[#C89B3C] transition-colors"
+                    >
+                      {t.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <Link
+              to="/contact"
+              onClick={() => setIsOpen(false)}
+              className={`text-[11px] tracking-[0.15em] uppercase font-medium transition-all hover:text-[#C89B3C] ${location.pathname === '/contact' ? 'text-[#C89B3C]' : textDark ? 'text-[#333]' : 'text-white/90'
+                }`}
+            >
+              Contact
+            </Link>
             <button
               onClick={() => { setIsOpen(false); openModal(); }}
               className="ml-3 px-6 py-2.5 bg-gradient-to-r from-[#C89B3C] to-[#E8C860] text-white text-[11px] tracking-[0.15em] uppercase font-semibold rounded-full hover:shadow-lg hover:shadow-[#C89B3C]/30 transition-all"
@@ -149,19 +183,59 @@ export default function Navbar() {
             </button>
           ))}
 
-          {pageLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              onClick={() => setIsOpen(false)}
-              className={`text-left py-3 px-4 text-sm tracking-wider uppercase font-medium rounded-lg transition-all ${location.pathname === link.to
+          <Link
+            to="/about"
+            onClick={() => setIsOpen(false)}
+            className={`text-left py-3 px-4 text-sm tracking-wider uppercase font-medium rounded-lg transition-all ${location.pathname === '/about'
+                ? "text-[#C89B3C] bg-[#C89B3C]/5"
+                : "text-[#333] hover:text-[#C89B3C] hover:bg-[#C89B3C]/5"
+              }`}
+          >
+            About
+          </Link>
+
+          <div>
+            <div
+              className={`flex items-center justify-between py-3 px-4 text-sm tracking-wider uppercase font-medium rounded-lg transition-all cursor-pointer ${location.pathname.startsWith('/treatments')
                   ? "text-[#C89B3C] bg-[#C89B3C]/5"
                   : "text-[#333] hover:text-[#C89B3C] hover:bg-[#C89B3C]/5"
                 }`}
             >
-              {link.label}
-            </Link>
-          ))}
+              <Link to="/treatments" onClick={() => setIsOpen(false)} className="flex-1">
+                Treatments
+              </Link>
+              <button
+                onClick={() => setMobileTreatmentsOpen((v) => !v)}
+                aria-label="Toggle treatments menu"
+                className="p-1"
+              >
+                <ChevronDown size={16} className={`transition-transform duration-300 ${mobileTreatmentsOpen ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+            <div className={`overflow-hidden transition-all duration-300 ${mobileTreatmentsOpen ? 'max-h-[60vh] overflow-y-auto' : 'max-h-0'}`}>
+              {treatments.map((t) => (
+                <Link
+                  key={t.slug}
+                  to={`/treatments/${t.slug}`}
+                  onClick={() => { setIsOpen(false); setMobileTreatmentsOpen(false); }}
+                  className="block py-2.5 pl-8 pr-4 text-xs tracking-wider uppercase font-medium text-[#666] hover:text-[#C89B3C] hover:bg-[#C89B3C]/5 rounded-lg transition-all"
+                >
+                  {t.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <Link
+            to="/contact"
+            onClick={() => setIsOpen(false)}
+            className={`text-left py-3 px-4 text-sm tracking-wider uppercase font-medium rounded-lg transition-all ${location.pathname === '/contact'
+                ? "text-[#C89B3C] bg-[#C89B3C]/5"
+                : "text-[#333] hover:text-[#C89B3C] hover:bg-[#C89B3C]/5"
+              }`}
+          >
+            Contact
+          </Link>
 
           <button
             onClick={() => {
