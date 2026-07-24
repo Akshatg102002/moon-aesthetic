@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { Phone, Mail, MapPin, Instagram, Facebook, Youtube, ArrowUp } from 'lucide-react';
+import { Phone, Mail, MapPin, Instagram, Facebook, ArrowUp } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
+import { treatments } from '../config/seo';
 
 const quickLinks = [
   { label: 'Home', href: '#home' },
@@ -12,16 +13,6 @@ const pageLinks = [
   { label: 'Contact', to: '/contact' },
 ];
 
-const treatments = [
-  'Skin Consultation',
-  'Acne Treatment',
-  'Hydrafacial',
-  'Chemical Peels',
-  'Anti-Aging Treatments',
-  'Laser Hair Removal',
-  'PRP Therapy',
-  'Hair Regrowth Treatment',
-];
 
 export default function Footer() {
   const navigate = useNavigate();
@@ -60,7 +51,7 @@ export default function Footer() {
 
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-[1fr_0.8fr_1.3fr_1fr] gap-12">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2.5 mb-6">
@@ -129,13 +120,13 @@ export default function Footer() {
           <div>
             <h4 className="font-['Playfair_Display'] text-lg font-bold mb-6">Treatments</h4>
             <ul className="space-y-3">
-              {treatments.map((s) => (
-                <li key={s}>
+              {treatments.map((treatment) => (
+                <li key={treatment.slug}>
                   <Link
-                    to="/treatments"
-                    className="text-white/50 hover:text-[#C89B3C] text-sm transition-colors font-['Poppins']"
+                    to={`/treatments/${treatment.slug}`}
+                    className="text-white/50 hover:text-[#C89B3C] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B3C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] text-sm transition-colors font-['Poppins']"
                   >
-                    {s}
+                    {treatment.title}
                   </Link>
                 </li>
               ))}

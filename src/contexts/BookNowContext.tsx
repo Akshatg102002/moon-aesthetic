@@ -37,4 +37,5 @@ export function BookNowProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBookNow = () => useContext(BookNowContext);

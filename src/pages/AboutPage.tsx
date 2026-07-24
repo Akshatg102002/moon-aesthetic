@@ -4,7 +4,7 @@ import {
   UserPlus, Sparkles, Stethoscope, ShieldCheck, Cpu,
   ClipboardCheck, Heart, Sun, Eye, Droplets, Flame, Wind,
   Clock, Syringe, Scissors, HeartPulse, Zap, Award,
-  GraduationCap, MessageCircle, Calendar, ArrowRight
+  GraduationCap, MessageCircle, Calendar
 } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
 import SEO from '../components/SEO';

@@ -1,10 +1,7 @@
 import { Calendar, MessageCircle } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
 import { useBookNow } from '../contexts/BookNowContext';
 
 export default function StickyButtons() {
-  const location = useLocation();
-  const isHome = location.pathname === '/';
   const { openModal } = useBookNow();
 
   return (
