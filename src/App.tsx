@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { BookNowProvider } from './contexts/BookNowContext';
 import BookNowModal from './components/BookNowModal';
 import Navbar from './components/Navbar';
@@ -21,6 +22,14 @@ import SEO from './components/SEO';
 import JsonLd from './components/JsonLd';
 import { pages } from './config/seo';
 import { medicalClinicSchema, organizationSchema, websiteSchema } from './config/schema';
+
+function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (!hash) window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior });
+  }, [pathname, hash]);
+  return null;
+}
 
 function HomePage() {
   const page = pages[0];
@@ -45,6 +54,7 @@ function App() {
     <BrowserRouter>
       <BookNowProvider>
         <div className="min-h-screen bg-white font-['Poppins'] text-[#333]">
+          <ScrollToTop />
           <JsonLd data={[organizationSchema, websiteSchema, medicalClinicSchema]} />
           <Navbar />
           <Routes>
