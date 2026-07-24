@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Sparkles, Droplets, Zap, Clock, Scissors, Eye, Sun, Flame, HeartPulse, Syringe, Wind, Crosshair, ArrowRight } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
 
@@ -31,22 +31,22 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 const defaultServices: Service[] = [
-  { id: 1, title: 'Skin Consultation', slug: 'skin-consultation', description: 'Comprehensive skin analysis and personalized treatment planning by our expert cosmetologists.', icon_name: 'eye', image_url: '/images/service-skin.jpg', category: 'Skin' },
-  { id: 2, title: 'Acne Treatment', slug: 'acne-treatment', description: 'Targeted therapies to treat active acne, reduce inflammation, and prevent future breakouts.', icon_name: 'droplets', image_url: '/images/service-skin.jpg', category: 'Skin' },
-  { id: 3, title: 'Acne Scar Treatment', slug: 'acne-scar-treatment', description: 'Advanced treatments including microneedling and laser to diminish acne scarring and smooth skin texture.', icon_name: 'sparkles', image_url: '/images/service-skin.jpg', category: 'Skin' },
-  { id: 4, title: 'Pigmentation Treatment', slug: 'pigmentation-treatment', description: 'Effective solutions for melasma, sun spots, and uneven skin tone using laser and chemical treatments.', icon_name: 'sun', image_url: '/images/service-skin.jpg', category: 'Skin' },
-  { id: 5, title: 'Hydrafacial', slug: 'hydrafacial', description: 'Multi-step hydration treatment that cleanses, exfoliates, extracts, and hydrates for instant glow.', icon_name: 'droplets', image_url: '/images/service-skin.jpg', category: 'Skin' },
-  { id: 6, title: 'Chemical Peels', slug: 'chemical-peels', description: 'Medical-grade peels to resurface skin, reduce blemishes, and reveal a brighter, smoother complexion.', icon_name: 'flame', image_url: '/images/service-peels.jpg', category: 'Skin' },
-  { id: 7, title: 'Carbon Facial', slug: 'carbon-facial', description: 'Laser carbon peel treatment for deep pore cleansing, oil reduction, and skin rejuvenation.', icon_name: 'wind', image_url: '/images/service-laser.jpg', category: 'Skin' },
-  { id: 8, title: 'Skin Rejuvenation', slug: 'skin-rejuvenation', description: 'Comprehensive treatments to restore youthful vitality, improve texture, and revitalize dull skin.', icon_name: 'sparkles', image_url: '/images/service-antiaging.jpg', category: 'Skin' },
-  { id: 9, title: 'Anti-Aging Treatments', slug: 'anti-aging-treatments', description: 'Botox, fillers, and non-surgical solutions to reduce fine lines, wrinkles, and restore youthful contours.', icon_name: 'clock', image_url: '/images/service-antiaging.jpg', category: 'Anti-Aging' },
-  { id: 10, title: 'PRP Therapy', slug: 'prp-therapy', description: "Platelet-rich plasma therapy for skin rejuvenation and hair restoration using your body's own growth factors.", icon_name: 'syringe', image_url: '/images/service-prp.jpg', category: 'Skin' },
-  { id: 11, title: 'Hair Fall Treatment', slug: 'hair-fall-treatment', description: 'Medical-grade treatments to address hair thinning and excessive hair fall with proven therapies.', icon_name: 'scissors', image_url: '/images/service-hair.jpg', category: 'Hair' },
-  { id: 12, title: 'Hair Regrowth Treatment', slug: 'hair-regrowth-treatment', description: 'Advanced regrowth protocols combining PRP, mesotherapy, and topical treatments for denser, healthier hair.', icon_name: 'heartpulse', image_url: '/images/service-hair.jpg', category: 'Hair' },
-  { id: 13, title: 'Laser Hair Removal', slug: 'laser-hair-removal', description: 'Safe and effective permanent hair reduction using advanced laser technology for all skin types.', icon_name: 'zap', image_url: '/images/service-laser.jpg', category: 'Laser' },
-  { id: 14, title: 'IV Infusion Therapy', slug: 'iv-infusion-therapy', description: 'Intravenous vitamin and nutrient infusions for skin glow, immunity boost, and overall wellness.', icon_name: 'syringe', image_url: '/images/service-skin.jpg', category: 'Wellness' },
-  { id: 15, title: 'MNRF Treatment', slug: 'mnrf-treatment', description: 'Microneedling Radiofrequency (MNRF) combines micro-injuries with RF energy to stimulate collagen, tighten skin, and reduce scars and pores.', icon_name: 'sparkles', image_url: '/images/service-mnrf.jpg', category: 'Skin' },
-  { id: 16, title: 'GFC Treatment', slug: 'gfc-treatment', description: 'Growth Factor Concentrate (GFC) therapy uses your own concentrated growth factors to promote hair regrowth and skin rejuvenation.', icon_name: 'syringe', image_url: '/images/service-gfc.jpg', category: 'Hair' },
+  { id: 1, title: 'Skin Consultation', slug: 'skin-consultation', description: 'Comprehensive skin analysis and personalized treatment planning by our expert cosmetologists.', icon_name: 'eye', image_url: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 2, title: 'Acne Treatment', slug: 'acne-treatment', description: 'Targeted therapies to treat active acne, reduce inflammation, and prevent future breakouts.', icon_name: 'droplets', image_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 3, title: 'Acne Scar Treatment', slug: 'acne-scar-treatment', description: 'Advanced treatments including microneedling and laser to diminish acne scarring and smooth skin texture.', icon_name: 'sparkles', image_url: 'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 4, title: 'Pigmentation Treatment', slug: 'pigmentation-treatment', description: 'Effective solutions for melasma, sun spots, and uneven skin tone using laser and chemical treatments.', icon_name: 'sun', image_url: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 5, title: 'Hydrafacial', slug: 'hydrafacial', description: 'Multi-step hydration treatment that cleanses, exfoliates, extracts, and hydrates for instant glow.', icon_name: 'droplets', image_url: 'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 6, title: 'Chemical Peels', slug: 'chemical-peels', description: 'Medical-grade peels to resurface skin, reduce blemishes, and reveal a brighter, smoother complexion.', icon_name: 'flame', image_url: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 7, title: 'Carbon Facial', slug: 'carbon-facial', description: 'Laser carbon peel treatment for deep pore cleansing, oil reduction, and skin rejuvenation.', icon_name: 'wind', image_url: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 8, title: 'Skin Rejuvenation', slug: 'skin-rejuvenation', description: 'Comprehensive treatments to restore youthful vitality, improve texture, and revitalize dull skin.', icon_name: 'sparkles', image_url: 'https://images.unsplash.com/photo-1559599076-9c61d8e1b77c?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 9, title: 'Anti-Aging Treatments', slug: 'anti-aging-treatments', description: 'Botox, fillers, and non-surgical solutions to reduce fine lines, wrinkles, and restore youthful contours.', icon_name: 'clock', image_url: 'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=800&q=80', category: 'Anti-Aging' },
+  { id: 10, title: 'PRP Therapy', slug: 'prp-therapy', description: "Platelet-rich plasma therapy for skin rejuvenation and hair restoration using your body's own growth factors.", icon_name: 'syringe', image_url: 'https://images.unsplash.com/photo-1626278664285-f796b9ee7806?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 11, title: 'Hair Fall Treatment', slug: 'hair-fall-treatment', description: 'Medical-grade treatments to address hair thinning and excessive hair fall with proven therapies.', icon_name: 'scissors', image_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80', category: 'Hair' },
+  { id: 12, title: 'Hair Regrowth Treatment', slug: 'hair-regrowth-treatment', description: 'Advanced regrowth protocols combining PRP, mesotherapy, and topical treatments for denser, healthier hair.', icon_name: 'heartpulse', image_url: 'https://images.unsplash.com/photo-1595475884562-073c30d45670?auto=format&fit=crop&w=800&q=80', category: 'Hair' },
+  { id: 13, title: 'Laser Hair Removal', slug: 'laser-hair-removal', description: 'Safe and effective permanent hair reduction using advanced laser technology for all skin types.', icon_name: 'zap', image_url: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&w=800&q=80', category: 'Laser' },
+  { id: 14, title: 'IV Infusion Therapy', slug: 'iv-infusion-therapy', description: 'Intravenous vitamin and nutrient infusions for skin glow, immunity boost, and overall wellness.', icon_name: 'syringe', image_url: 'https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?auto=format&fit=crop&w=800&q=80', category: 'Wellness' },
+  { id: 15, title: 'MNRF Treatment', slug: 'mnrf-treatment', description: 'Microneedling Radiofrequency (MNRF) combines micro-injuries with RF energy to stimulate collagen, tighten skin, and reduce scars and pores.', icon_name: 'sparkles', image_url: 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?auto=format&fit=crop&w=800&q=80', category: 'Skin' },
+  { id: 16, title: 'GFC Treatment', slug: 'gfc-treatment', description: 'Growth Factor Concentrate (GFC) therapy uses your own concentrated growth factors to promote hair regrowth and skin rejuvenation.', icon_name: 'syringe', image_url: 'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=800&q=80', category: 'Hair' },
   { id: 17, title: 'Anti Dandruff Treatment', slug: 'anti-dandruff-treatment', description: 'Targeted scalp treatments to eliminate dandruff, soothe irritation, and restore a healthy, flake-free scalp.', icon_name: 'droplets', image_url: '/images/service-antidandruff.jpg', category: 'Hair' },
 ];
 
@@ -57,6 +57,7 @@ export default function Services() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All');
   const { openModal } = useBookNow();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch('/api/services')
@@ -143,6 +144,7 @@ export default function Services() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-50px' }}
                   transition={{ duration: 0.4, delay: index * 0.05 }}
+                  onClick={() => navigate(`/treatments/${service.slug}`)}
                   className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-[#C89B3C]/10 transition-all duration-500 cursor-pointer"
                 >
                   <div className="relative h-40 overflow-hidden">
@@ -161,12 +163,12 @@ export default function Services() {
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-['Playfair_Display'] text-base font-bold text-[#1a1a1a] mb-2 group-hover:text-[#C89B3C] transition-colors"><Link to={`/treatments/${service.slug}`}>{service.title}</Link></h3>
+                    <h3 className="font-['Playfair_Display'] text-base font-bold text-[#1a1a1a] mb-2 group-hover:text-[#C89B3C] transition-colors"><Link to={`/treatments/${service.slug}`} onClick={(e) => e.stopPropagation()}>{service.title}</Link></h3>
                     <p className="text-[#888] text-xs leading-relaxed mb-3 font-['Poppins'] line-clamp-2">
                       {service.description}
                     </p>
                     <button
-                      onClick={() => openModal(service.title)}
+                      onClick={(e) => { e.stopPropagation(); openModal(service.title); }}
                       className="flex items-center gap-1.5 text-[#C89B3C] text-xs font-semibold group-hover:gap-2.5 transition-all"
                     >
                       Book Now <ArrowRight size={14} />
