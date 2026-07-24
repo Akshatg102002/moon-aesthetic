@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ChevronDown, Shield, Award, Clock, Users } from 'lucide-react';
+import { ChevronDown, Shield, Award, Users } from 'lucide-react';
 import { useBookNow } from '../contexts/BookNowContext';
 
 const trustBadges = [
